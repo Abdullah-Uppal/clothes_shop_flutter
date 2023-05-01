@@ -12,86 +12,120 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late final List<Widget> _listItems = [
+    _getListTile(
+      leading: FontAwesomeIcons.circlePlus,
+      title: "Add Cloth",
+      onTap: () {},
+    ),
+    // _getDivider(),
+    _getListTile(
+      leading: FontAwesomeIcons.video,
+      title: "Demo Video",
+      onTap: () {},
+    ),
+    // _getDivider(),
+    _getListTile(
+      leading: FontAwesomeIcons.arrowRightFromBracket,
+      title: "Logout",
+      onTap: () async {
+        await FirebaseAuth.instance.signOut();
+        context.pushReplacement('/login');
+      },
+    ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
       child: SafeArea(
+        child: Center(
           child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 20.0,
-          horizontal: 30,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Profile", style: Theme.of(context).textTheme.bodyLarge),
-            Container(
-              margin: const EdgeInsets.only(top: 20),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade400,
-                      blurRadius: 2,
-                      offset: Offset(0, 2),
-                    ),
-                  ]),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(50),
+            padding: const EdgeInsets.only(top: 30.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(200),
+                  child: FirebaseAuth.instance.currentUser?.photoURL != null
+                      ? Image.network(
+                          FirebaseAuth.instance.currentUser?.photoURL ?? '',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          color: const Color.fromRGBO(0x1e, 0x2e, 0x3d, 0.7),
+                          width: 100,
+                          height: 100,
+                          child: Center(
+                            child: Text(
+                              FirebaseAuth
+                                      .instance.currentUser?.displayName?[0] ??
+                                  '',
+                              style: TextStyle(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  FirebaseAuth.instance.currentUser?.displayName ?? '',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  FirebaseAuth.instance.currentUser?.email ?? '',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.black.withOpacity(0.4),
+                  ),
+                ),
+                // other settings below
+                SizedBox(height: 20),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    child: ListView.separated(
+                      itemCount: _listItems.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          _listItems[index],
+                      separatorBuilder: (BuildContext context, int index) =>
+                          Divider(
+                        thickness: 1,
+                      ),
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          FirebaseAuth.instance.currentUser?.displayName ??
-                              "No Name",
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        Text(
-                          FirebaseAuth.instance.currentUser?.email ??
-                              "No Email",
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        // logout button
-                        CustomButton(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          text: "Logout",
-                          onPressed: () async {
-                            await FirebaseAuth.instance.signOut();
-                            context.pushReplacement('/login');
-                          },
-                          size: Size.fromWidth(
-                              MediaQuery.of(context).size.width * 0.4),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 100,
-            ),
-          ],
+          ),
         ),
-      )),
+      ),
+    );
+  }
+
+  ListTile _getListTile({
+    required IconData leading,
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      leading: Icon(
+        leading,
+        color:const Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
+      ),
+      title: Text(title),
+      onTap: onTap,
     );
   }
 }
