@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../widgets/custom_button.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -15,7 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late final List<Widget> _listItems = [
     _getListTile(
       leading: FontAwesomeIcons.circlePlus,
-      title: "Add Cloth",
+      title: "Create Cloth",
       onTap: () {
         context.push('/create');
       },
@@ -34,6 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
         FirebaseAuth.instance
             .signOut()
             .then((value) => context.pushReplacement('/login'));
+        GoogleSignIn().disconnect();
       },
     ),
   ];

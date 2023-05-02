@@ -7,13 +7,19 @@ class CustomTextFormField extends StatefulWidget {
   bool? obscureText;
   TextEditingController? controller;
   void Function(String)? onFieldSubmitted;
+  final int maxLines;
+  final int? maxCharacters;
+  final TextInputType keyboardType;
   CustomTextFormField({
     super.key,
     required this.label,
     this.obscureText,
     this.validator,
     this.controller,
-    this.onFieldSubmitted
+    this.onFieldSubmitted,
+    this.maxLines = 1,
+    this.maxCharacters,
+    this.keyboardType = TextInputType.text,
   });
 
   @override
@@ -35,7 +41,10 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       onFieldSubmitted: widget.onFieldSubmitted,
       validator: widget.validator,
       obscureText: isObscure,
+      maxLines: widget.maxLines,
       controller: widget.controller,
+      maxLength: widget.maxCharacters,
+      keyboardType: widget.keyboardType,
       decoration: InputDecoration(
         suffixIcon: widget.obscureText != null
             ? IconButton(

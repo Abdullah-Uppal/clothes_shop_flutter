@@ -37,6 +37,7 @@ class _VideoPageState extends State<VideoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Demo Video'),
         backgroundColor: Colors.transparent,
