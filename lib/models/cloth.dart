@@ -2,14 +2,14 @@ class Cloth {
   String? _id;
   String name;
   String description;
-  String image;
+  List<String> images;
   double price;
   String sex;
 
   Cloth({
     required this.name,
     required this.description,
-    required this.image,
+    required this.images,
     required this.price,
     required this.sex,
   });
@@ -18,7 +18,7 @@ class Cloth {
     var cloth = Cloth(
       name: data["name"],
       description: data["description"],
-      image: data["image"],
+      images: data["images"],
       price: data["price"],
       sex: data["sex"],
     );
@@ -33,7 +33,7 @@ class Cloth {
       if (_id != null) "_id": _id,
       "name": name,
       "description": description,
-      "image": image,
+      "images": images,
       "price": price,
       "sex": sex,
     };

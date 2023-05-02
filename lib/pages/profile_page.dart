@@ -16,21 +16,24 @@ class _ProfilePageState extends State<ProfilePage> {
     _getListTile(
       leading: FontAwesomeIcons.circlePlus,
       title: "Add Cloth",
-      onTap: () {},
+      onTap: () {
+        context.push('/create');
+      },
     ),
-    // _getDivider(),
     _getListTile(
       leading: FontAwesomeIcons.video,
       title: "Demo Video",
-      onTap: () {},
+      onTap: () {
+        context.push('/video');
+      },
     ),
-    // _getDivider(),
     _getListTile(
       leading: FontAwesomeIcons.arrowRightFromBracket,
       title: "Logout",
-      onTap: () async {
-        await FirebaseAuth.instance.signOut();
-        context.pushReplacement('/login');
+      onTap: () {
+        FirebaseAuth.instance
+            .signOut()
+            .then((value) => context.pushReplacement('/login'));
       },
     ),
   ];
@@ -122,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       leading: Icon(
         leading,
-        color:const Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
+        color: const Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
       ),
       title: Text(title),
       onTap: onTap,

@@ -157,9 +157,19 @@ class _LoginPageState extends State<LoginPage> {
                     FontAwesomeIcons.google,
                     () async {
                       final googleUser =
-                          await GoogleSignIn(forceCodeForRefreshToken: true)
+                          await GoogleSignIn()
                               .signIn();
+
                       final googleAuth = await googleUser?.authentication;
+
+                      // create credential
+                      final credential = GoogleAuthProvider.credential(
+                        accessToken: googleAuth?.accessToken,
+                        idToken: googleAuth?.idToken,
+                      );
+
+                      await FirebaseAuth.instance
+                          .signInWithCredential(credential);
                     },
                   ),
                   _getSocialLoginButton(FontAwesomeIcons.facebook, () async {}),
