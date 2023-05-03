@@ -5,6 +5,7 @@ class Cloth {
   List<String> images;
   double price;
   String sex;
+  DateTime createdAt = DateTime.now();
 
   Cloth({
     required this.name,
@@ -22,6 +23,7 @@ class Cloth {
       price: data["price"],
       sex: data["sex"],
     );
+    cloth.createdAt = data["createdAt"].toDate();
     if (data["_id"]) {
       cloth._id = data["_id"];
     }
@@ -36,6 +38,7 @@ class Cloth {
       "images": images,
       "price": price,
       "sex": sex,
+      "createdAt": createdAt.toIso8601String(),
     };
   }
 }

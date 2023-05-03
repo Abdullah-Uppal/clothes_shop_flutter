@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:last_assignment/app_state.dart';
+import 'package:last_assignment/models/cloth.dart';
+import 'package:provider/provider.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../widgets/custom_button.dart';
 import 'package:form_validator/form_validator.dart';
@@ -18,13 +21,13 @@ class _CreateClothPageState extends State<CreateClothPage> {
     if (_formKey.currentState!.validate()) {}
   }
 
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _priceController = TextEditingController();
   String _gender = "Male";
-  final _images = [
-    'https://images.threadsmagazine.com/app/uploads/5139/13/11201922/131-turn-of-cloth-01-main.jpg',
-    'https://media.istockphoto.com/id/1302815072/photo/blank-black-tshirt-on-young-man-template-on-white-background.jpg?b=1&s=170667a&w=0&k=20&c=qN6fOV1ZbuM3nVOxlpqjLTNgBvItZlJI-Jlga4tlUwE=',
-  ];
-  List<XFile> pickedImages = [];
 
+  List<XFile> pickedImages = [];
+  Future<bool>? _isUploading;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +37,22 @@ class _CreateClothPageState extends State<CreateClothPage> {
         backgroundColor: Colors.transparent,
         foregroundColor: const Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
         shadowColor: Colors.transparent,
+        actions: [
+          FutureBuilder(
+            future: _isUploading,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              return Container();
+            },
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -46,12 +65,14 @@ class _CreateClothPageState extends State<CreateClothPage> {
                   children: [
                     CustomTextFormField(
                       label: "Name",
+                      controller: _nameController,
                       validator: ValidationBuilder().minLength(3).build(),
                       onFieldSubmitted: (_) => _submitForm(),
                     ),
                     const SizedBox(height: 20),
                     CustomTextFormField(
                       label: "Description",
+                      controller: _descriptionController,
                       maxLines: 3,
                       maxCharacters: 200,
                       validator: ValidationBuilder().minLength(3).build(),
@@ -64,16 +85,17 @@ class _CreateClothPageState extends State<CreateClothPage> {
                         Expanded(
                           child: CustomTextFormField(
                             label: "\$ Price",
+                            controller: _priceController,
                             keyboardType: TextInputType.number,
-                            validator: ValidationBuilder().add((value) {
-                              // check if all numbers
-                              if (value != null) {
-                                if (double.tryParse(value) == null) {
-                                  return 'Please enter a valid number';
-                                }
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Price is required"),
+                                  ),
+                                );
                               }
-                              return null;
-                            }).build(),
+                            },
                             onFieldSubmitted: (_) => _submitForm(),
                           ),
                         ),
@@ -147,14 +169,48 @@ class _CreateClothPageState extends State<CreateClothPage> {
                 ],
               ),
               const SizedBox(height: 20),
-              CustomButton(
-                backgroundColor: const Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
-                text: "Create Cloth",
-                onPressed: () {
-                  _submitForm();
-                },
-                size: Size.fromWidth(MediaQuery.of(context).size.width),
-              )
+              Consumer<AppState>(builder: (context, state, _) {
+                return CustomButton(
+                  backgroundColor: const Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
+                  text: "Create Cloth",
+                  onPressed: () {
+                    _submitForm();
+                    setState(() {
+                      _isUploading = state
+                          .createCloth(
+                              Cloth(
+                                  name: _nameController.text,
+                                  description: _descriptionController.text,
+                                  images: [],
+                                  price:
+                                      double.tryParse(_priceController.text) ??
+                                          0.0,
+                                  sex: _gender),
+                              pickedImages)
+                          .then((status) {
+                        if (status) {
+                          // show snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Cloth created successfully"),
+                            ),
+                          );
+                        }
+                        // failure snackbar
+                        else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Cloth creation failed"),
+                            ),
+                          );
+                        }
+                        return status;
+                      });
+                    });
+                  },
+                  size: Size.fromWidth(MediaQuery.of(context).size.width),
+                );
+              })
             ],
           ),
         ),
