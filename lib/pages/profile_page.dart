@@ -29,6 +29,20 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     ),
     _getListTile(
+      leading: FontAwesomeIcons.database,
+      title: "SQFlite Demo",
+      onTap: () {
+        context.push('/sqflite');
+      },
+    ),
+    _getListTile(
+      leading: FontAwesomeIcons.internetExplorer,
+      title: "REST API",
+      onTap: () {
+        context.push('/api');
+      },
+    ),
+    _getListTile(
       leading: FontAwesomeIcons.arrowRightFromBracket,
       title: "Logout",
       onTap: () {

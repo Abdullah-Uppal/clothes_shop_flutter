@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:last_assignment/app_state.dart';
 import 'package:last_assignment/models/cloth.dart';
@@ -195,6 +196,13 @@ class _CreateClothPageState extends State<CreateClothPage> {
                               content: Text("Cloth created successfully"),
                             ),
                           );
+                          _descriptionController.clear();
+                          _nameController.clear();
+                          _priceController.clear();
+                          pickedImages.clear();
+                          setState(() {
+                            
+                          });
                         }
                         // failure snackbar
                         else {

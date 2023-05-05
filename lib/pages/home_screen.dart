@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'profile_page.dart';
+import 'clothes_list_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,15 +13,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // shared preferences
+  late SharedPreferences _prefs;
   Color _customColor = Color.fromRGBO(0x1e, 0x2e, 0x3d, 1);
   final List<Widget> _pages = [
-    Container(
-      key: UniqueKey(),
-      color: Colors.amber,
-      child: Center(
-        child: Text('Home'),
-      ),
-    ),
+    ClothesListPage(),
     Container(
       key: UniqueKey(),
       color: Colors.pink,
@@ -38,10 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   int _tabIndex = 0;
   int _previousTabIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _initPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _tabIndex = _prefs.getInt('tabIndex') ?? 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     double _padding = MediaQuery.of(context).size.width * 0.05;
+    _initPrefs();
     return Material(
       child: Stack(
         children: [
@@ -81,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           _tabIndex = value;
                         });
+                        _prefs.setInt('tabIndex', value);
                       },
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       backgroundColor: _customColor,

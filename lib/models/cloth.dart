@@ -1,5 +1,6 @@
 class Cloth {
   String? _id;
+  String? get id => _id;
   String name;
   String description;
   List<String> images;
@@ -16,15 +17,18 @@ class Cloth {
   });
 
   factory Cloth.fromMap(Map<String, dynamic> data) {
+    print("DATA");
+    print(data);
     var cloth = Cloth(
       name: data["name"],
       description: data["description"],
-      images: data["images"],
+      images:
+          (data["images"] as List<dynamic>).whereType<String>().toList(),
       price: data["price"],
       sex: data["sex"],
     );
-    cloth.createdAt = data["createdAt"].toDate();
-    if (data["_id"]) {
+    cloth.createdAt = DateTime.parse(data["createdAt"]);
+    if (data["_id"] != null) {
       cloth._id = data["_id"];
     }
     return cloth;
