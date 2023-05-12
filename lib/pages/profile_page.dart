@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               FirebaseAuth
                                       .instance.currentUser?.displayName?[0] ??
                                   '',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 40,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -91,10 +91,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   FirebaseAuth.instance.currentUser?.displayName ?? '',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -107,16 +107,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 // other settings below
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: ListView.separated(
                       itemCount: _listItems.length,
                       itemBuilder: (BuildContext context, int index) =>
                           _listItems[index],
                       separatorBuilder: (BuildContext context, int index) =>
-                          Divider(
+                          const Divider(
                         thickness: 1,
                       ),
                     ),

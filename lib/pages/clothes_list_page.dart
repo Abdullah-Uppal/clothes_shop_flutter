@@ -7,6 +7,23 @@ import 'package:provider/provider.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../app_state.dart';
 
+class DotPainter extends BoxPainter {
+  @override
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    var newOffset = Offset(offset.dx + (configuration.size!.width/2), offset.dy + 40);
+    canvas.drawCircle(newOffset, 4, Paint());
+  }
+
+}
+
+class DottedDecoration extends Decoration {
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return DotPainter();
+  }
+
+}
+
 class ClothesListPage extends StatefulWidget {
   const ClothesListPage({super.key});
 
@@ -14,7 +31,15 @@ class ClothesListPage extends StatefulWidget {
   State<ClothesListPage> createState() => _ClothesListPageState();
 }
 
-class _ClothesListPageState extends State<ClothesListPage> {
+class _ClothesListPageState extends State<ClothesListPage>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +57,23 @@ class _ClothesListPageState extends State<ClothesListPage> {
             onPressed: () {},
           ),
         ],
+        bottom: TabBar(
+          // indicator: BoxDecoration(
+          //   borderRadius: BorderRadius.circular(50),
+          //   color: Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
+          // ),
+          indicator: DottedDecoration(),
+          splashBorderRadius: BorderRadius.circular(50),
+          indicatorSize: TabBarIndicatorSize.tab,
+          labelColor: Colors.black,
+          unselectedLabelColor: Color.fromRGBO(0x1e, 0x2e, 0x3d, 1),
+          tabs: [
+            Tab(text: 'All'),
+            Tab(text: 'Male'),
+            Tab(text: 'Female'),
+          ],
+          controller: _tabController,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -71,6 +113,26 @@ class _ClothesListPageState extends State<ClothesListPage> {
                                   crossAxisCount: 2),
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
+                            state.images[snapshot.data![index]] = Image.network(
+                              snapshot.data![index],
+                              loadingBuilder:
+                                  (context, child, loadingProgress) =>
+                                      loadingProgress == null
+                                          ? child
+                                          : Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes!
+                                                    : null,
+                                              ),
+                                            ),
+                            );
+
                             return GestureDetector(
                               onDoubleTap: () {
                                 print("LIKED");
@@ -101,26 +163,28 @@ class _ClothesListPageState extends State<ClothesListPage> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(15),
-                                    child: Image.network(
-                                      snapshot.data![index],
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) =>
-                                              loadingProgress == null
-                                                  ? child
-                                                  : Center(
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        value: loadingProgress
-                                                                    .expectedTotalBytes !=
-                                                                null
-                                                            ? loadingProgress
-                                                                    .cumulativeBytesLoaded /
-                                                                loadingProgress
-                                                                    .expectedTotalBytes!
-                                                            : null,
-                                                      ),
-                                                    ),
-                                    ),
+                                    child:
+                                        state.images[snapshot.data![index]] ??
+                                            Image.network(
+                                              snapshot.data![index],
+                                              loadingBuilder: (context, child,
+                                                      loadingProgress) =>
+                                                  loadingProgress == null
+                                                      ? child
+                                                      : Center(
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                            value: loadingProgress
+                                                                        .expectedTotalBytes !=
+                                                                    null
+                                                                ? loadingProgress
+                                                                        .cumulativeBytesLoaded /
+                                                                    loadingProgress
+                                                                        .expectedTotalBytes!
+                                                                : null,
+                                                          ),
+                                                        ),
+                                            ),
                                   ),
                                   Positioned(
                                       right: 0,

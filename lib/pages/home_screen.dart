@@ -85,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: GNav(
+                    selectedIndex: _tabIndex,
                       onTabChange: (value) {
                         print(value);
                         _previousTabIndex = _tabIndex;

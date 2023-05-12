@@ -1,6 +1,8 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:last_assignment/widgets/custom_button.dart';
+import 'package:provider/provider.dart';
+import '../app_state.dart';
 import '../models/cloth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -27,23 +29,30 @@ class _ClothDetailPageState extends State<ClothDetailPage> {
                   child: PageView.builder(
                     itemCount: widget.cloth!.images.length,
                     itemBuilder: (context, index) {
-                      return FutureBuilder(
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              return CachedNetworkImage(
-                                useOldImageOnUrlChange: true,
-                                imageUrl: snapshot.data.toString(),
-                                fit: BoxFit.cover,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.5,
-                              );
-                            } else {
-                              return CircularProgressIndicator();
-                            }
-                          },
-                          future: FirebaseStorage.instance
-                              .ref(widget.cloth!.images[index])
-                              .getDownloadURL());
+                      return Consumer<AppState>(
+                          builder: (context, state, child) {
+                        return FutureBuilder(
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return state.images.putIfAbsent(
+                                    snapshot.data.toString(),
+                                    () => Image.network(
+                                          snapshot.data.toString(),
+                                          fit: BoxFit.cover,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.5,
+                                        ));
+                                // return state.images[snapshot.data.toString()] == ;
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            },
+                            future: FirebaseStorage.instance
+                                .ref(widget.cloth!.images[index])
+                                .getDownloadURL());
+                      });
                       return Image.network(
                         widget.cloth!.images[index],
                         fit: BoxFit.cover,

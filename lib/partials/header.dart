@@ -28,6 +28,8 @@ class Header extends StatelessWidget {
           color: customColor,
         ),
         Positioned(
+          bottom: 20,
+          left: 20,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -37,7 +39,7 @@ class Header extends StatelessWidget {
                   style: headingStyle,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               ...subheadings.map(
@@ -48,8 +50,6 @@ class Header extends StatelessWidget {
               ),
             ],
           ),
-          bottom: 20,
-          left: 20,
         ),
       ],
     );

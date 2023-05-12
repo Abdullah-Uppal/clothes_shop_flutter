@@ -26,6 +26,7 @@ class AppState extends ChangeNotifier {
   StreamSubscription<QuerySnapshot>? _clothesSubscription;
   List<Cloth> _clothes = [];
   List<Cloth> get clothes => _clothes;
+  Map<String, Image> images = {};
   void init() {
     _clothesSubscription = FirebaseFirestore.instance
         .collection('clothes')
