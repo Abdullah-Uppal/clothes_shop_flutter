@@ -4,7 +4,6 @@ import 'package:last_assignment/widgets/custom_button.dart';
 import 'package:provider/provider.dart';
 import '../app_state.dart';
 import '../models/cloth.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class ClothDetailPage extends StatefulWidget {
   final Cloth? cloth;
@@ -53,11 +52,6 @@ class _ClothDetailPageState extends State<ClothDetailPage> {
                                 .ref(widget.cloth!.images[index])
                                 .getDownloadURL());
                       });
-                      return Image.network(
-                        widget.cloth!.images[index],
-                        fit: BoxFit.cover,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                      );
                     },
                   ),
                 ),
